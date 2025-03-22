@@ -20,8 +20,7 @@ A modern, responsive library management system built with React, TypeScript, and
 - **Real-time Updates**: State management using Zustand
 
 ## Demo
-
-[Demo Video](link-to-your-demo-video)
+[LibraTrack demo.webm](https://github.com/user-attachments/assets/4593680d-738e-427f-9d34-7ddb08c5f1ef)
 
 ## Getting Started
 
