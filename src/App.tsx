@@ -1,69 +1,67 @@
-import React, { useState } from "react";
+import { useEffect, useState } from "react";
 import { Sidebar } from "./components/Sidebar";
 import { AdminDashboard } from "./components/AdminDashboard";
 import { BookCatalog } from "./components/BookCatalog";
+import { BorrowedBooks } from "./components/BorrowedBooks";
+import { Favorites } from "./components/Favorites";
 import { UserManagement } from "./components/UserManagement";
 import { TransactionHistory } from "./components/TransactionHistory";
 import { Reports } from "./components/Reports";
 import { Settings } from "./components/Settings";
-import type { Book } from "./types";
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  UserButton,
-} from "@clerk/clerk-react";
+import { SignIn, SignedOut, SignedIn } from "@clerk/clerk-react";
+import type { BookType } from "./types";
+import { UserDashboard } from "./components/UserDashboard";
+import { useUser } from "@clerk/clerk-react";
 
-// Sample data
-const sampleBooks: Book[] = [
-  {
-    id: "1",
-    title: "The Great Gatsby",
-    author: "F. Scott Fitzgerald",
-    isbn: "978-0743273565",
-    category: "Fiction",
-    price: 14.99,
-    stockLevel: 5,
-    status: "available",
-    coverUrl:
-      "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
-    description: "A story of decadence and excess.",
-    borrowCount: 25,
-    lastBorrowed: "2024-03-01",
-  },
-  {
-    id: "2",
-    title: "To Kill a Mockingbird",
-    author: "Harper Lee",
-    isbn: "978-0446310789",
-    category: "Fiction",
-    price: 12.99,
-    stockLevel: 3,
-    status: "borrowed",
-    coverUrl:
-      "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=800",
-    description: "A classic of modern American literature.",
-    borrowCount: 18,
-    lastBorrowed: "2024-02-28",
-  },
-];
+// Admin emails list - in a real app, this would come from your backend
+const ADMIN_EMAILS = ["admin@gmail.com"];
 
 function App() {
-  const [activeView, setActiveView] = useState("dashboard");
-  const [books, setBooks] = useState(sampleBooks);
+  const [books, setBooks] = useState<BookType[]>([]);
 
-  const handleBookAction = (action: "borrow" | "purchase", bookId: string) => {
+  useEffect(() => {
+    fetch("/books.json")
+      .then((response) => response.json())
+      .then((data) => setBooks(data))
+      .catch((error) => console.error("Error loading the books data:", error));
+  }, []);
+
+  const [activeView, setActiveView] = useState("dashboard");
+  const { user } = useUser();
+
+  const isAdmin =
+    user && ADMIN_EMAILS.includes(user.primaryEmailAddress?.emailAddress || "");
+
+  const username =
+    user && user.username
+      ? user.username.charAt(0).toUpperCase() + user.username.slice(1)
+      : "";
+
+  const handleBookAction = (
+    action: "borrow" | "purchase" | "favorite",
+    bookId: string
+  ) => {
     setBooks((prevBooks) =>
       prevBooks.map((book) => {
         if (book.id === bookId) {
           if (action === "borrow") {
-            return { ...book, status: "borrowed" as const };
+            return {
+              ...book,
+              status: "borrowed" as const,
+              lastBorrowed: new Date().toISOString(),
+            };
           } else if (action === "purchase") {
             return {
               ...book,
               stockLevel: book.stockLevel - 1,
               status:
                 book.stockLevel <= 1 ? ("reserved" as const) : book.status,
+            };
+          } else if (action === "favorite") {
+            return {
+              ...book,
+              status: "favorites" as const,
+              lastBorrowed: new Date().toISOString(),
             };
           }
         }
@@ -72,38 +70,71 @@ function App() {
     );
   };
 
+  const handleReturnBook = (bookId: string) => {
+    setBooks((prevBooks) =>
+      prevBooks.map((book) => {
+        if (book.id === bookId) {
+          return {
+            ...book,
+            status: "available" as const,
+            borrowCount: (book.borrowCount || 0) + 1,
+          };
+        }
+        return book;
+      })
+    );
+  };
+
   const renderContent = () => {
+    // Show dashboard based on user role
+    if (activeView === "dashboard") {
+      return isAdmin ? (
+        <AdminDashboard books={books} />
+      ) : (
+        <UserDashboard books={books} username={username} />
+      );
+    }
+
     switch (activeView) {
-      case "dashboard":
-        return <AdminDashboard />;
       case "books":
         return <BookCatalog books={books} onBookAction={handleBookAction} />;
+      case "borrowed":
+        return <BorrowedBooks books={books} onReturn={handleReturnBook} />;
+      case "favorites":
+        return <Favorites />;
       case "users":
-        return <UserManagement />;
+        return isAdmin ? <UserManagement /> : null;
       case "transactions":
         return <TransactionHistory />;
       case "reports":
-        return <Reports />;
+        return isAdmin ? <Reports /> : null;
       case "settings":
         return <Settings />;
       default:
-        return <AdminDashboard />;
+        return isAdmin ? (
+          <AdminDashboard books={books} />
+        ) : (
+          <UserDashboard books={books} username={username} />
+        );
     }
   };
 
   return (
-    <div className="flex min-h-screen bg-gray-50">
-      <header>
-        <SignedOut>
-          <SignInButton />
-        </SignedOut>
-        <SignedIn>
-          <UserButton />
-        </SignedIn>
-      </header>
-
-      <Sidebar activeView={activeView} onViewChange={setActiveView} />
-      <main className="flex-1 p-8 overflow-auto">{renderContent()}</main>
+    <div className="h-[100vh] flex min-h-screen bg-gray-50">
+      <SignedOut>
+        <div className="w-full flex items-center justify-center">
+          <SignIn />
+        </div>
+      </SignedOut>
+      <SignedIn>
+        <Sidebar
+          activeView={activeView}
+          onViewChange={setActiveView}
+          isAdmin={isAdmin}
+          username={username}
+        />
+        <main className="flex-1 p-8 overflow-auto">{renderContent()}</main>
+      </SignedIn>
     </div>
   );
 }

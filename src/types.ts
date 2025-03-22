@@ -1,4 +1,4 @@
-export interface Book {
+export interface BookType {
   id: string;
   title: string;
   author: string;
@@ -6,53 +6,50 @@ export interface Book {
   category: string;
   price: number;
   stockLevel: number;
-  status: 'available' | 'borrowed' | 'reserved';
+  status: "available" | "borrowed" | "reserved" | "favorites";
   coverUrl: string;
   description: string;
   borrowCount?: number;
   lastBorrowed?: string;
+  isFavorite?: boolean;
 }
 
 export interface User {
   id: string;
   name: string;
   email: string;
-  role: 'admin' | 'staff' | 'customer';
-  status: 'active' | 'suspended' | 'deactivated';
+  role: "admin" | "user";
+  status: "active" | "suspended";
   joinedAt: string;
   lastActive: string;
   borrowedBooks: string[];
-  fines: number;
-  recentBorrows?: {
+  totalSpent: number;
+  borrowHistory: {
     bookId: string;
-    bookTitle: string;
-    dueDate: string;
-    status: 'returned' | 'due' | 'overdue';
+    borrowDate: string;
+    returnDate?: string;
   }[];
-}
-
-export interface Transaction {
-  id: string;
-  bookId: string;
-  userId: string;
-  type: 'purchase' | 'borrow' | 'return';
-  date: string;
-  dueDate?: string;
-  status: 'active' | 'completed' | 'overdue';
-  amount?: number;
-  paymentStatus?: 'paid' | 'pending' | 'refunded';
+  purchaseHistory: {
+    bookId: string;
+    purchaseDate: string;
+    amount: number;
+  }[];
 }
 
 export interface DashboardStats {
   totalBooks: number;
-  activeUsers: number;
-  currentLoans: number;
-  totalTransactions: number;
+  availableBooks: number;
+  borrowedBooks: number;
+  totalUsers: number;
   recentTransactions: Transaction[];
-  popularBooks: Book[];
-  activeLoans: {
-    user: User;
-    book: Book;
-    dueDate: string;
-  }[];
+  favoritesCount: number;
+}
+
+export interface Transaction {
+  id: string;
+  userId: string;
+  bookId: string;
+  type: "borrow" | "return" | "purchase";
+  date: string;
+  amount?: number;
 }

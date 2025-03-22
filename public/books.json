@@ -1,0 +1,72 @@
+[
+  {
+    "id": "1",
+    "title": "Crime Subject Power Car.",
+    "author": "Zachary Gray",
+    "isbn": "978-1-955232-13-5",
+    "category": "Science",
+    "price": 40.65,
+    "stockLevel": 14,
+    "status": "borrowed",
+    "coverUrl": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=800",
+    "description": "From far no buy somebody six. Animal wonder child thought.",
+    "borrowCount": 70,
+    "lastBorrowed": "2025-02-16"
+  },
+  {
+    "id": "2",
+    "title": "American Pressure Eight Huge Weight.",
+    "author": "Brett Flores",
+    "isbn": "978-0-06-561527-2",
+    "category": "Fantasy",
+    "price": 11.9,
+    "stockLevel": 4,
+    "status": "available",
+    "coverUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
+    "description": "Report heart place decision ok. Consumer rule how.\nWhich recently maintain show several study.",
+    "borrowCount": 40,
+    "lastBorrowed": "2025-01-13"
+  },
+  {
+    "id": "3",
+    "title": "Change Improve.",
+    "author": "Jason Schwartz",
+    "isbn": "978-0-7233-8245-4",
+    "category": "Non-Fiction",
+    "price": 45.82,
+    "stockLevel": 17,
+    "status": "available",
+    "coverUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
+    "description": "Commercial purpose political ok quite keep. Lawyer employee compare. Fight someone debate action.",
+    "borrowCount": 98,
+    "lastBorrowed": "2025-02-12"
+  },
+  {
+    "id": "4",
+    "title": "The Great Gatsby",
+    "author": "F. Scott Fitzgerald",
+    "isbn": "978-0743273565",
+    "category": "Fiction",
+    "price": 14.99,
+    "stockLevel": 5,
+    "status": "available",
+    "coverUrl": "https://images.unsplash.com/photo-1544947950-fa07a98d237f?auto=format&fit=crop&q=80&w=800",
+    "description": "A story of decadence and excess.",
+    "borrowCount": 25,
+    "lastBorrowed": "2024-03-01"
+  },
+  {
+    "id": "5",
+    "title": "To Kill a Mockingbird",
+    "author": "Harper Lee",
+    "isbn": "978-0446310789",
+    "category": "Fiction",
+    "price": 12.99,
+    "stockLevel": 3,
+    "status": "borrowed",
+    "coverUrl": "https://images.unsplash.com/photo-1543002588-bfa74002ed7e?auto=format&fit=crop&q=80&w=800",
+    "description": "A classic of modern American literature.",
+    "borrowCount": 18,
+    "lastBorrowed": "2024-02-28"
+  }
+]
